@@ -176,7 +176,7 @@ export const TravelMapScreen: React.FC<TravelMapScreenProps> = ({ onShowNotice, 
   // ---------------------------------------------------------------------------
   const levelOfScene = (s?: MapSceneInfo): number => s?.level ?? 3;
 
-  // 向上回溯到指定层级的祖先节点；若当前已是根节点，则向下取该层第一个子节点作为画布归属
+  // 向上回溯到指定层级的祖先节点；若当前为上层节点，则向下取归属于该节点的子孙
   const ancestorIdAtLevel = (key: string, targetLevel: number): string | null => {
     let cursor: MapSceneInfo | undefined = allScenes[key];
     const visited = new Set<string>();
@@ -189,11 +189,16 @@ export const TravelMapScreen: React.FC<TravelMapScreenProps> = ({ onShowNotice, 
     }
 
     const root = cursor ?? allScenes[key];
-    if (!root) return null;
-    const descendant = scenesList.find(
-      (s) => levelOfScene(s) === targetLevel && s.parentId === root.mapId
-    );
-    return descendant?.mapId ?? null;
+    if (root) {
+      const descendant = scenesList.find(
+        (s) => levelOfScene(s) === targetLevel && (s.parentId === root.mapId || !root.parentId)
+      );
+      if (descendant) return descendant.mapId;
+    }
+
+    // 兜底返回该层级的首个有效场景，避免层级间脱节造成展示所有层级的点位
+    const fallback = scenesList.find((s) => levelOfScene(s) === targetLevel);
+    return fallback?.mapId ?? null;
   };
 
   // 同级画布只展示“归属于当前上层节点”的点位，避免不同都城的坊市叠在同一张底图上（基于当前所在位置归属）
@@ -202,13 +207,11 @@ export const TravelMapScreen: React.FC<TravelMapScreenProps> = ({ onShowNotice, 
   const levelScenes = scenesList.filter((s) => levelOfScene(s) === mapLevel);
   const scopedScenes = scopeId ? levelScenes.filter((s) => s.parentId === scopeId) : levelScenes;
 
-  // 兜底：数据尚未配置层级时，宁可在同一画布铺开对应点位，也绝不留一张空底图
+  // 严禁各层级点位混杂：始终只展示当前层级 (level === mapLevel) 的场景节点
   const currentLevelScenes =
     scopedScenes.length > 0
       ? scopedScenes
-      : levelScenes.length > 0
-        ? levelScenes
-        : scenesList;
+      : levelScenes;
 
   // 动态底图：优先取当前所在场景的 backgroundUrl，若无则向上取父级场景，均无则取根大地图
   const currentMapBackground = useMemo(() => {

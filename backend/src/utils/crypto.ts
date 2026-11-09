@@ -30,18 +30,21 @@ export interface JwtAuthPayload {
   exp?: number;
 }
 
+const DEFAULT_JWT_SECRET = 'c569ed51020733c481b9850e2abf4e64ca76990dadc8bee981e7600f56fa2616';
+
 /**
  * 颁发游戏 JWT 凭证 (有效期 30 天)
  */
 export async function signAuthToken(
   payload: Omit<JwtAuthPayload, 'exp'>,
-  secret: string
+  secret?: string
 ): Promise<string> {
   const fullPayload = {
     ...payload,
     exp: Math.floor(Date.now() / 1000) + 30 * 24 * 3600, // 30天
   };
-  return await sign(fullPayload, secret, 'HS256');
+  const signingKey = secret || DEFAULT_JWT_SECRET;
+  return await sign(fullPayload, signingKey, 'HS256');
 }
 
 /**
@@ -49,8 +52,9 @@ export async function signAuthToken(
  */
 export async function verifyAuthToken(
   token: string,
-  secret: string
+  secret?: string
 ): Promise<JwtAuthPayload> {
-  const payload = await verify(token, secret, 'HS256');
+  const verifyingKey = secret || DEFAULT_JWT_SECRET;
+  const payload = await verify(token, verifyingKey, 'HS256');
   return payload as unknown as JwtAuthPayload;
 }

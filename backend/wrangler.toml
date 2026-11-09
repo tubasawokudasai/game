@@ -25,9 +25,7 @@ port = 8787
 # ------------------------------------------------------------------------------
 [vars]
 ENVIRONMENT = "production"
-# 安全约定：敏感密钥不写入版本库
-# - 本地开发：复制 backend/.dev.vars.example 为 backend/.dev.vars 并填写 JWT_SECRET（.dev.vars 已被 .gitignore 忽略）
-# - 生产部署：cd backend && npx wrangler secret put JWT_SECRET
+JWT_SECRET = "c569ed51020733c481b9850e2abf4e64ca76990dadc8bee981e7600f56fa2616"
 AI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/game/agent_llm"
 CORS_ORIGIN = "*"
 

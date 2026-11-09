@@ -126,6 +126,18 @@ export const CHARACTER_SPRITE_OPTIONS: CharacterSpriteOption[] = [
     subtitle: '落星寒潭 · 守魂孤影',
     faction: 'HERO',
   },
+  {
+    url: `${SPRITE_DIR}/hero_huajiuxian_trans.png`,
+    name: '花玖弦',
+    subtitle: '浮生茶庐 · 掌柜',
+    faction: 'HERO',
+  },
+  {
+    url: `${SPRITE_DIR}/hero_guyuling_trans.png`,
+    name: '顾羽灵',
+    subtitle: '破虏亲军 · 副将',
+    faction: 'HERO',
+  },
 ];
 
 export const CHARACTER_SPRITE_MAP: Record<string, CharacterSpriteOption> = Object.fromEntries(
