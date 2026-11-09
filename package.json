@@ -1,0 +1,24 @@
+{
+  "name": "wanxiang-game-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "万象录",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "admin"
+  ],
+  "scripts": {
+    "test": "yarn --cwd backend test",
+    "dev:frontend": "yarn --cwd frontend dev",
+    "build:frontend": "yarn --cwd frontend build",
+    "dev:admin": "yarn --cwd admin dev",
+    "build:admin": "yarn --cwd admin build",
+    "dev:backend": "yarn --cwd backend dev",
+    "deploy:backend": "yarn --cwd backend deploy",
+    "d1:init": "yarn --cwd backend run d1:local"
+  },
+  "keywords": ["xianxia", "react", "vite", "cloudflare-workers", "durable-objects", "d1"],
+  "author": "Antigravity Architect",
+  "license": "MIT"
+}

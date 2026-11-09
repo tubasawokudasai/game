@@ -1,0 +1,81 @@
+# ==============================================================================
+# 万象录 - Cloudflare Serverless 后端资源配置文件 (wrangler.toml)
+# 
+# 架构特性：
+# 1. 边缘高并发：基于 Cloudflare Workers + Hono.js 构建轻量化 API 网关。
+# 2. 强状态层 (Stateful)：利用 Durable Objects 维系地图房间 WebSocket 长连接与赌场定时器。
+# 3. 关系型存储：基于 Cloudflare D1 (SQLite) 实现 ACID 事务（背包、邮件附件、玩家资产）。
+# 4. 异步队列：使用 Cloudflare Queues 解耦重型计算（战斗战报持久化、AI Agent 事件流分发）。
+# ==============================================================================
+
+name = "game-backend"
+main = "src/index.ts"
+compatibility_date = "2024-05-12"
+compatibility_flags = ["nodejs_compat"]
+
+# ------------------------------------------------------------------------------
+# 0. 本地开发网络监听配置 (允许局域网/内网 IP 访问)
+# ------------------------------------------------------------------------------
+[dev]
+ip = "0.0.0.0"
+port = 8787
+
+# ------------------------------------------------------------------------------
+# 1. 环境变量配置 (Vars)
+# ------------------------------------------------------------------------------
+[vars]
+ENVIRONMENT = "production"
+# 安全约定：敏感密钥不写入版本库
+# - 本地开发：复制 backend/.dev.vars.example 为 backend/.dev.vars 并填写 JWT_SECRET（.dev.vars 已被 .gitignore 忽略）
+# - 生产部署：cd backend && npx wrangler secret put JWT_SECRET
+AI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/game/agent_llm"
+CORS_ORIGIN = "*"
+
+# ------------------------------------------------------------------------------
+# 2. Durable Objects (DO) 状态对象绑定
+# 维护地图在线玩家、WebSocket 会话与定时唤醒逻辑
+# ------------------------------------------------------------------------------
+[durable_objects]
+bindings = [
+  { name = "ZONE_DO", class_name = "ZoneDO" },
+  { name = "MAP_DO", class_name = "ZoneDO" },
+  { name = "CASINO_DO", class_name = "CasinoDO" },
+  { name = "WORLD_CHAT_DO", class_name = "WorldChatDO" }
+]
+
+# Durable Objects 数据库迁移版本控制 (首次部署必须指定 new_sqlite_classes)
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ZoneDO", "CasinoDO", "WorldChatDO"]
+
+# ------------------------------------------------------------------------------
+# 3. Cloudflare D1 关系型数据库绑定 (SQLite at Edge)
+# 用于强一致性业务：玩家基础数据、背包装备资产、带附件交易邮件
+# ------------------------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "game_d1_prod"
+database_id = "9d13db61-47c7-4973-97af-e321318cdae0"
+
+# ------------------------------------------------------------------------------
+# 4. Cloudflare KV 高速缓存绑定
+# 用于缓存玩家 Session Token、热点排行榜缓存、全局静态字典配置
+# ------------------------------------------------------------------------------
+[[kv_namespaces]]
+binding = "GAME_KV"
+id = "8c6e2943fa5c4b53a28ed334ef132e51"
+
+# ------------------------------------------------------------------------------
+# 5. Cloudflare Queues 异步事件消息队列
+# 生产者-消费者模型：用于解耦战斗结算大日志、异步成就统计、AI Agent 行为事件流
+# ------------------------------------------------------------------------------
+[[queues.producers]]
+binding = "GAME_EVENT_QUEUE"
+queue = "game-event-pipeline"
+
+[[queues.consumers]]
+queue = "game-event-pipeline"
+max_batch_size = 20        # 一次批处理消费的最大条数
+max_batch_timeout = 5       # 批处理等待超时时间 (秒)
+max_retries = 3             # 失败最大重试次数
+dead_letter_queue = "game-event-dlq" # 死信队列

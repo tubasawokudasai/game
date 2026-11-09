@@ -1,0 +1,12 @@
+# 复制本文件为 backend/.dev.vars 后使用（.dev.vars 已被 .gitignore 忽略，不会被提交）
+#
+# 本地开发：填写任意足够随机的字符串作为 JWT 签名密钥
+JWT_SECRET="local-dev-only-change-me"
+#
+# 可选：覆盖默认管理员账号
+# 代码中的默认值是 admin / admin123，仅用于本地开发；
+# 生产环境必须通过 Cloudflare Secret 覆盖：
+#   cd backend && npx wrangler secret put ADMIN_PASSWORD
+#   cd backend && npx wrangler secret put JWT_SECRET
+# ADMIN_USERNAME="admin"
+# ADMIN_PASSWORD="change-me"

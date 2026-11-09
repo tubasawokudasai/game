@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    background-color: #0c141e;
+  }
+  body {
+    overscroll-behavior: none;
+    font-family: 'Noto Serif', serif;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  main > :first-child {
+    margin-top: 0 !important;
+  }
+  main > :last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* 隐藏原生滚动条，保持游戏沉浸感 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* 战斗系统专属动态特效与关键帧 */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes bounce-slow {
+  0% {
+    transform: translateY(10px) scale(0.85);
+    opacity: 0;
+  }
+  20% {
+    transform: translateY(-6px) scale(1.15);
+    opacity: 1;
+  }
+  40% {
+    transform: translateY(0px) scale(1);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(-12px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-24px) scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 3.6s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 1.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* 九州仙途国风通行证与高阶金辉特效 */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #f7e2a9 0%, #dfb76c 60%, #b28a3a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border {
+  border-color: rgba(223, 183, 108, 0.35);
+}
+
+.gold-border-glow {
+  border: 1px solid rgba(223, 183, 108, 0.45);
+  box-shadow: 0 0 15px rgba(223, 183, 108, 0.15), inset 0 0 15px rgba(223, 183, 108, 0.05);
+}
+
+.cinematic-bg {
+  background: radial-gradient(circle at 50% 25%, #18283d 0%, #0c1521 55%, #060b12 100%);
+}
+
+.cloud-pattern {
+  background-image: radial-gradient(rgba(223, 183, 108, 0.08) 1px, transparent 0);
+  background-size: 20px 20px;
+}

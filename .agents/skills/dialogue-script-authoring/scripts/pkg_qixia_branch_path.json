@@ -1,0 +1,15 @@
+[
+  {"teleport": "scene_qixia_valley"},
+  {"start": {"npcId": "npc_suwanling"},
+   "expect": {"node": "node_reg_qixia_01", "options_include": ["opt_qixia_01_accept", "opt_qixia_01_inquire"]}},
+  {"select": "opt_qixia_01_accept", "expect": {"status": "CLOSE", "sceneChanged": true}},
+  {"teleport": "scene_huichun_terrace"},
+  {"start": {"auto_npc": true},
+   "expect": {"node": "node_reg_qixia_02_fight", "options_include": ["opt_qixia_fight_xuanxi"]}},
+  {"select": "opt_qixia_fight_xuanxi", "expect": {"status": "COMBAT"}},
+  {"settle": "win", "expect": {"node": "node_reg_qixia_03_win"}},
+  {"advance": {}, "expect": {"status": "CLOSE", "mail_count": 1}},
+  {"teleport": "scene_qixia_valley"},
+  {"start": {"npcId": "npc_suwanling"},
+   "expect": {"node": "node_reg_qixia_01", "options_include": ["opt_qixia_01_accept", "opt_qixia_01_inquire"]}}
+]

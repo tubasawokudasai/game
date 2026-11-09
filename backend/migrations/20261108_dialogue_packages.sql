@@ -1,0 +1,11 @@
+-- ==============================================================================
+-- [已废弃 / 已被 20261108_dialogue_pages_and_direct_next.sql 取代]
+--
+-- 旧版剧本系统要求每个节点只有单条 content、所有跳转都必须建 dialogue_option。
+-- 新版改为节点内多段台词 (pages_json) + 无分支直连 (direct_next_node_id)，
+-- 并按需求清空全部旧剧本数据，不再兼容本迁移中的旧种子。
+--
+-- 请使用：
+--   yarn --cwd backend d1:dialogue-pages:local
+--   yarn --cwd backend d1:dialogue-pages:remote
+-- ==============================================================================
